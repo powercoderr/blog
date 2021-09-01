@@ -1,0 +1,13 @@
+#blog-headline{
+    width: 50%;
+    margin: auto;
+    text-align: center;
+}
+article{
+    max-width: 75%;
+    margin: auto;
+}
+article + article{
+    margin-top: 50px;
+    border-top: 0.2px solid black;
+}
