@@ -18,8 +18,7 @@ Route::get('/blog', function () {
 });
 
 Route::get('blog/posts/{postName}', function($postName){
-    $path = __DIR__."/../resources/posts/{$postName}.html";
-    if(!file_exists($path)){
+    if(!file_exists($path = __DIR__."/../resources/posts/{$postName}.html")){
         abort(404);
     }
     $post = file_get_contents($path);
@@ -27,4 +26,4 @@ Route::get('blog/posts/{postName}', function($postName){
     return view('post', [
         'post'=>$post
     ]);
-});
+})->where('postName', '[A-Za-z-]+');
