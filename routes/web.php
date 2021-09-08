@@ -21,7 +21,8 @@ Route::get('blog/posts/{postName}', function($postName){
     if(!file_exists($path = __DIR__."/../resources/posts/{$postName}.html")){
         abort(404);
     }
-    $post = file_get_contents($path);
+
+    $post = cache()->remember("blog.posts.{$postName}", 3600, fn()=> file_get_contents($path));
 
     return view('post', [
         'post'=>$post
