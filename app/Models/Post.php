@@ -2,31 +2,91 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\File;
+use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 class Post
 {
-    use HasFactory;
+    public $title;
+    public $date;
+    public $excerpt;
+    public $slug;
+    public $body;
+
+    public function __construct($title, $date, $excerpt, $slug, $body){
+        $this->title = $title;
+        $this->date = $date;
+        $this->excerpt = $excerpt;
+        $this->slug = $slug;
+        $this->body = $body;
+    }
+    
     /**
      * Get all the post
      */
     public static function all(){   
-        $files =  File::files(resource_path("posts"));
-        return array_map(function($file){
-            return $file->getContents();
-        }, $files);
+        //Get each files as yaml and store it to new array called $post
+        
+        //$files =  File::files(resource_path("posts"));
+        //1. Using array_map
+        // $post = array_map(function($file){
+                //Change every file to yaml
+        //     $object = YamlFrontMatter::parseFile($file);
+        //     return $object;
+        // }, $files);
+        
+        //2. Using foreach
+        // $post =[];
+        // foreach($files as $file){
+                //Change every file to yaml
+        //     $document = YamlFrontMatter::parseFile($file);
+                //Makes as Post Object
+        //     $post[]= new Post(
+        //         $document->title,
+        //         $document->date,
+        //         $document->excerpt,
+        //         $document->slug,
+        //         $document->body()
+        //     );
+        // }
+
+        //3. Using collection
+        return collect(File::files(resource_path("posts")))
+            ->map(function($file){
+                return YamlFrontMatter::parseFile($file);
+            })
+            ->map(function($document){
+                return new Post(
+                    $document->title,
+                    $document->date,
+                    $document->excerpt,
+                    $document->slug,
+                    $document->body()
+                );
+            });
+            /**Explanation :
+             * For each file, map it to Yaml, and then maken an object from that result. Each object become a part of collection
+             */
     }
 
     /**
      * Find a post by it's name
      */
     public static function find($postName){   
-        if(!file_exists($path = resource_path("posts/{$postName}.html"))){
-            throw new ModelNotFoundException();
-        }
-        return  cache()->remember("blog.posts.{$postName}", 3600, fn()=> file_get_contents($path));
+        // if(!file_exists($path = resource_path("posts/{$postName}.html"))){
+        //     throw new ModelNotFoundException();
+        // }
+       
+        // return  cache()->remember("blog.posts.{$postName}", 1, function() use($path){
+        //     $document = YamlFrontMatter::parseFile($path);
+        //     return new Post(
+        //         $document->title,
+        //         $document->date,
+        //         $document->excerpt,
+        //         $document->slug,
+        //         $document->body()
+        //     );
+        // });
+        return Static::all()->firstWhere('slug', $postName);
     }
 }
