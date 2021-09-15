@@ -63,7 +63,8 @@ class Post
                     $document->slug,
                     $document->body()
                 );
-            });
+            })
+            ->sortBy('date', SORT_REGULAR, true);
             /**Explanation :
              * For each file, map it to Yaml, and then maken an object from that result. Each object become a part of collection
              */
