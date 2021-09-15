@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
@@ -77,24 +78,19 @@ class Post
     /**
      * Find a post by it's name
      */
-    public static function find($postName){   
-        // if(!file_exists($path = resource_path("posts/{$postName}.html"))){
-        //     throw new ModelNotFoundException();
-        // }
-       
-        // return  cache()->remember("blog.posts.{$postName}", 1, function() use($path){
-        //     $document = YamlFrontMatter::parseFile($path);
-        //     return new Post(
-        //         $document->title,
-        //         $document->date,
-        //         $document->excerpt,
-        //         $document->slug,
-        //         $document->body()
-        //     );
-        // });
-        return Cache::rememberForever('post.{$slug}', function() use ($postName){
-            return Static::all()->firstWhere('slug', $postName);
-        });
-        
+    public static function find($postName){          
+        return Static::all()->firstWhere('slug', $postName);
+    }
+
+    /**
+     * Find a post by it's name
+     */
+    public static function findOrFail($postName){   
+        $post = Static::find($postName);
+        if($post == null){
+            throw new ModelNotFoundException();
+        }
+        return $post;
+
     }
 }
