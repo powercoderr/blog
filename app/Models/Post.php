@@ -92,6 +92,9 @@ class Post
         //         $document->body()
         //     );
         // });
-        return Static::all()->firstWhere('slug', $postName);
+        return Cache::rememberForever('post.{$slug}', function() use ($postName){
+            return Static::all()->firstWhere('slug', $postName);
+        });
+        
     }
 }
