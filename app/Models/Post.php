@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 
@@ -50,24 +51,27 @@ class Post
         //     );
         // }
 
-        //3. Using collection
-        return collect(File::files(resource_path("posts")))
-            ->map(function($file){
-                return YamlFrontMatter::parseFile($file);
-            })
-            ->map(function($document){
-                return new Post(
-                    $document->title,
-                    $document->date,
-                    $document->excerpt,
-                    $document->slug,
-                    $document->body()
-                );
-            })
-            ->sortBy('date', SORT_REGULAR, true);
+        //3. Using collection & store it as a cache name post.all
+        return Cache::rememberForever('post.all', function(){
+            return collect(File::files(resource_path("posts")))
+                ->map(function($file){
+                    return YamlFrontMatter::parseFile($file);
+                })
+                ->map(function($document){
+                    return new Post(
+                        $document->title,
+                        $document->date,
+                        $document->excerpt,
+                        $document->slug,
+                        $document->body()
+                    );
+                })
+                ->sortBy('date', SORT_REGULAR, true);
             /**Explanation :
-             * For each file, map it to Yaml, and then maken an object from that result. Each object become a part of collection
+             * For each file, map it to Yaml, and then maken an object from that result. Each object become a part of collection. Last, cache that forever
              */
+
+        });
     }
 
     /**
