@@ -14,16 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/blog', function () {
+Route::get('/', function () {
     return view('blog',[
         //Find all post and pass it to view called blog
         'posts' => Post::all()
     ]);
 });
 
-Route::get('blog/posts/{postName}', function($postName){
+Route::get('posts/{id}', function($id){
     return view('post', [
         //Find a post by slug and pass it to view called post
-        'post' => Post::findOrFail($postName)
+        'post' => Post::findOrFail($id)
     ]);
 });
