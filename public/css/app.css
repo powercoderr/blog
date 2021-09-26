@@ -11,3 +11,6 @@ article + article{
     margin-top: 50px;
     border-top: 0.2px solid black;
 }
+p{
+    line-height: 1.3;
+}
