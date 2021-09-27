@@ -2,7 +2,8 @@
     <h1 id="blog-headline">Welcome to My Blog</h1>
     @foreach ($posts as $post)
         <article>
-            <h1><a href="/posts/{{ $post->id }}">{{ $post->title }}</a></h1>
+            <h1><a href="/posts/{{ $post->slug }}">{{ $post->title }}</a></h1>
+            <p>{{ $post->category->name }}</p>
             <div>{{ $post->excerpt }}</div>
         </article>     
     @endforeach
