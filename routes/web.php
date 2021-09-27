@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//get all post
 Route::get('/', function () {
     return view('blog',[
         //Find all post and pass it to view called blog
@@ -21,9 +23,18 @@ Route::get('/', function () {
     ]);
 });
 
+//Get one post by it's slug
 Route::get('posts/{post:slug}', function(Post $post){
     return view('post', [
         //Find a post by slug and pass it to view called post
         'post' => $post
+    ]);
+});
+
+//Get all post associated with category
+Route::get('/category/{category:name}', function(Category $category){
+    return view('blog',[
+        //Find all post associated with category and pass it to view called blog
+        'posts' => $category->posts
     ]);
 });
