@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('blog',[
         //Find all post and pass it to view called blog
-        'posts' => Post::all()
+        'posts' => Post::with(['category', 'user'])->get()
     ]);
 });
 
